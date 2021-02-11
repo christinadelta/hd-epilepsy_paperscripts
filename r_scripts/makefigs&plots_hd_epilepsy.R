@@ -62,7 +62,25 @@ p + coord_flip()
 # ---------------------------------------------
 # 4. Make bubble plot of TEPs, source model and number of studies
 
+library(readxl)
+# load the model data:
+bubbledata = read_excel("Desktop/HD_epilepsy/bubble_info2.xls")
+df = bubbledata
 
+# set the theme function theme_bw() as the default theme:
+theme_set(
+  theme_bw() + 
+    theme(legend.position = "top")
+)
 
+# Inspect the data
+# head(df[, c("TEPs","TEPnum", "deflection", "timewindow", "studynum", "inversesolution")], 4)
 
+# Convert deflection as a grouping variable
+df$deflection2 = as.factor(df$deflection2)
+
+ggplot(df, aes(x = inversesolution, y = timewindow)) + 
+  geom_point(aes(color = deflection2, size = studynum), alpha = 0.5) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800", "#FC4E07", "#999999")) +
+  scale_size(range = c(1, 10))  # Adjust the range of points size
 
