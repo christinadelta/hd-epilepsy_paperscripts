@@ -7,7 +7,7 @@ library(plotrix)
 library(ggplot2)
 
 # Create data for the graph.
-x =  c(1, 10)
+x =  c(4, 11)
 lbl = c("","")
 # lbl = c("2010-2015","2016-2020")
 
@@ -24,7 +24,7 @@ dev.off()
 # 2. MAKE PIE CHART OF THE POPULATION IN THE STUDY: CLINICAL AND HEALTHY SUBJECTS
 
 # Create data for the graph.
-x =  c(3, 1, 7)
+x =  c(3, 1, 1, 10)
 lbl = c("","","")
 
 # Give the chart file a name.
@@ -43,8 +43,8 @@ dev.off()
 
 # create a dataframe with the data
 df = data.frame(stim_site=c("PFC", "Motor Cortex", "SMA", "Visual Cortex", 
-                       "SMC", "Pecuneus", "Parietal Cortex"),
-                 N_studies=c(6, 2, 1, 2, 1, 1, 1))
+                       "SMC", "Pecuneus", "Parietal Cortex", "Premotor Cortex", "Frontal Cortex" ),
+                 N_studies=c(7, 2, 1, 2, 1,1, 4, 1, 2))
 
 # take a look at the data
 head(df)
@@ -83,4 +83,12 @@ ggplot(df, aes(x = inversesolution, y = timewindow)) +
   geom_point(aes(color = deflection2, size = studynum), alpha = 0.5) +
   scale_color_manual(values = c("#00AFBB", "#E7B800", "#FC4E07", "#999999")) +
   scale_size(range = c(1, 10))  # Adjust the range of points size
+
+
+# version 2 of the bubble plot
+ggplot(df, aes(x = timewindow, y = inversesolution)) + 
+  geom_point(aes(color = deflection2, size = studynum), alpha = 0.5) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800", "#FC4E07", "#999999")) +
+  scale_size(range = c(1, 10))  # Adjust the range of points size
+
 
