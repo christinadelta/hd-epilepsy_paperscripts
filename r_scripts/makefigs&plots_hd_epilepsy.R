@@ -87,8 +87,65 @@ ggplot(df, aes(x = inversesolution, y = timewindow)) +
 
 # version 2 of the bubble plot
 ggplot(df, aes(x = timewindow, y = inversesolution)) + 
-  geom_point(aes(color = deflection2, size = studynum), alpha = 0.5) +
+  geom_point(aes(color = deflection2, size = deflection), alpha = 0.5) +
   scale_color_manual(values = c("#00AFBB", "#E7B800", "#FC4E07", "#999999")) +
   scale_size(range = c(1, 10))  # Adjust the range of points size
+
+#----------------------------------------------
+
+# 5. Make pie chart, for source reconstruction models and number of studies 
+
+# Create data for the graph.
+x =  c(2,8,4,1,1)
+lbl = c("","","","")
+
+# Give the chart file a name.
+png(file = "3d_pie_of_the studiesByCortRec.jpg")
+
+# Plot the chart.
+pie3D(x,labels = lbl,explode = 0.1, main = "Pie Chart of studies by cortical reconstruction ")
+
+# Save the file.
+dev.off()
+
+# ---------------------------------------------------
+
+# 6. circular packing for proportion of studies, TEPs and cortical solution method 
+
+# Libraries
+library(ggraph)
+library(igraph)
+library(tidyverse)
+library(viridis)
+
+# Add the data.tree library
+library(data.tree)
+
+# Rebuild the data
+edges = flare$edges
+vertices = flare$vertices
+
+# Transform it in a 'tree' format
+tree = FromDataFrameNetwork(edges)
+
+# Then I can easily get the level of each node, and add it to the initial data frame:
+mylevels = data.frame( name=tree$Get('name'), level=tree$Get("level") )
+vertices = vertices %>% 
+  left_join(., mylevels, by=c("name"="name"))
+
+# Now we can add label for level1 and 2 only for example:
+vertices = vertices %>% 
+  mutate(new_label=ifelse(level==2, shortName, NA))
+mygraph = graph_from_data_frame( edges, vertices=vertices )
+
+# Make the graph
+ggraph(mygraph, layout = 'circlepack', weight="size") + 
+  geom_node_circle(aes(fill = as.factor(depth), color = as.factor(depth) )) +
+  scale_fill_manual(values=c("0" = "white", "1" = viridis(4)[1], "2" = viridis(4)[2], "3" = viridis(4)[3], "4"=viridis(4)[4])) +
+  scale_color_manual( values=c("0" = "white", "1" = "black", "2" = "black", "3" = "black", "4"="black") ) +
+  geom_node_label( aes(label=new_label), size=4) +
+  theme_void() + 
+  theme(legend.position="FALSE", plot.margin = unit(rep(0,4), "cm"))
+
 
 
